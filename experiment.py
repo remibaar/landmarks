@@ -85,7 +85,7 @@ class Experiment:
         total_approx_error = 0
         for i in range(self.number_of_checks):
             (s, d, real_distance) = good_results[i]
-            total_approx_error += abs(real_distance - approximations[i]) / real_distance
+            total_approx_error += (abs(real_distance - approximations[i]) + 1) / (real_distance + 1)
         avg_approx_error = total_approx_error / self.number_of_checks
 
         print('Average approximation error is ' + str(avg_approx_error))
