@@ -69,7 +69,7 @@ def precomputation(g, directory, k):
             logging.info('i = ' + str(i) + ', j = ' + str(j) + ', landmarks = ' + str(landmarks))
 
             # Forward search
-            shortest_paths = g.shortest_path_nodes_to_landmark(landmarks)
+            shortest_paths = g.shortest_path_nodes_to_landmark_length(landmarks)
             for node, (landmark, distance) in shortest_paths.items():
                 if node not in sketches:
                     sketches[node] = list()
@@ -77,7 +77,7 @@ def precomputation(g, directory, k):
                 sketches[node].append((Direction.forward, landmark, distance))
 
             # Backward search
-            shortest_paths = g.shortest_path_nodes_from_landmark(landmarks)
+            shortest_paths = g.shortest_path_nodes_from_landmark_length(landmarks)
             for node, (landmark, distance) in shortest_paths.items():
                 if node not in sketches:
                     sketches[node] = list()

@@ -47,7 +47,7 @@ class Graph(metaclass=ABCMeta):
         else:
             return len(shortest_path) - 1
 
-    def _shortest_path_nodes_landmark(self, landmarks, expansion_function):
+    def _shortest_path_nodes_landmark_length(self, landmarks, expansion_function):
         shortest_paths = {l: (l, 0) for l in landmarks}
 
         expansion = set(landmarks)
@@ -66,11 +66,37 @@ class Graph(metaclass=ABCMeta):
 
         return shortest_paths
 
-    def shortest_path_nodes_to_landmark(self, landmarks):
-        return self._shortest_path_nodes_landmark(landmarks, self.predecessors)
+    def shortest_path_nodes_to_landmark_length(self, landmarks):
+        return self._shortest_path_nodes_landmark_length(landmarks, self.predecessors)
 
-    def shortest_path_nodes_from_landmark(self, landmarks):
-        return self._shortest_path_nodes_landmark(landmarks, self.successors)
+    def shortest_path_nodes_from_landmark_length(self, landmarks):
+        return self._shortest_path_nodes_landmark_length(landmarks, self.successors)
+
+    def _shortest_path_nodes_landmark_path(self, landmarks, expansion_function):
+        shortest_paths = {l: [l] for l in landmarks}
+
+        expansion = set(landmarks)
+        while expansion:
+            new_expansion = set()
+
+            for v in expansion:
+                # successors that are not found before
+                successors = [u for u in expansion_function(v) if u not in shortest_paths.keys()]
+
+                for successor in successors:
+                    shortest_paths[successor] = [successor] + shortest_paths[v]
+                    new_expansion.add(successor)
+
+            expansion = new_expansion
+
+        return shortest_paths
+
+    def shortest_path_nodes_to_landmark_path(self, landmarks):
+        return self._shortest_path_nodes_landmark_path(landmarks, self.predecessors)
+
+    def shortest_path_nodes_from_landmark_path(self, landmarks):
+        shortest_paths = self._shortest_path_nodes_landmark_path(landmarks, self.successors)
+        return {node: reversed(path) for node, path in shortest_paths.items()}
 
     def print_statistics(self):
         print('N: \t', self.n())
