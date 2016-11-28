@@ -73,13 +73,23 @@ class Experiment:
         logging.info('Finished selection of random nodes and distance calculation in '+str(tock-tick)+'s')
 
         logging.info('Start approximations')
-
+        approximations = list()
         tick = timeit.default_timer()
         for (s, d, real_distance) in good_results:
-            approx_distance = self.computation_func(s, d, self.graph, self.precomputation_dir, **self.computation_kwargs)
+            approximations.append(self.computation_func(s, d, self.graph, self.precomputation_dir, **self.computation_kwargs))
             #print(s, ' -> ', d, ' = ', approx_distance, '(real distance = ', real_distance, ')')
         tock = timeit.default_timer()
         logging.info('Finished approximations in '+str(tock-tick)+'s')
+
+        logging.info('Start calculation metrics')
+        total_approx_error = 0
+        for i in range(self.number_of_checks):
+            (s, d, real_distance) = good_results[i]
+            total_approx_error += abs(real_distance - approximations[i]) / real_distance
+        avg_approx_error = total_approx_error / self.number_of_checks
+
+        print('Average approximation error is ' + str(avg_approx_error))
+        logging.info('Finished Start calculation metrics')
 
     def run(self):
         self._load_graph()
