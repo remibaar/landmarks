@@ -1,6 +1,7 @@
 import math
 import enum
 import logging
+import os
 
 
 def _file_name(name, directory):
@@ -38,6 +39,9 @@ def _read_sketches(filename):
     :param filename:
     :return: list of sketches
     """
+    if not os.path.exists(filename):
+        return None
+
     sketches = list()
     file = open(filename, mode='r')
     for line in file:
@@ -60,7 +64,7 @@ def precomputation(g, directory, k):
     sketches = dict()
 
     # Calculate sketches
-    r = max(1, math.floor(math.log2(g.n())))
+    r = max(1, math.floor(math.log10(g.n())))
     logging.info('r = '+str(r))
 
     for i in range(k):
@@ -98,6 +102,9 @@ def sketch(s, d, g, directory):
     # Read sketches
     s_sketches = _read_sketches(_file_name(s, directory))
     d_sketches = _read_sketches(_file_name(d, directory))
+
+    if s_sketches is None or d_sketches is None:
+        return float('inf')
 
     # Filter direction
     s_sketches = [sketch for sketch in s_sketches if sketch[0] == Direction.forward]
