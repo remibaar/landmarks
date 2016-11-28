@@ -1,6 +1,7 @@
 import graph
 import os
 import logging
+import timeit
 
 class Experiment:
 
@@ -48,22 +49,37 @@ class Experiment:
             os.makedirs(self.precomputation_dir)
 
         logging.info('Start precomputation')
+        tick = timeit.default_timer()
         self.precomputation_func(self.graph, self.precomputation_dir, **self.precomputation_kwargs)
-        logging.info('Finished precomputation')
+        tock = timeit.default_timer()
+
+        logging.info('Finished precomputation in '+str(tock-tick)+'s')
 
         # Create flag file, to indicate precomputation was completed
         open(self.precomputation_dir+'/.precompation_completed', mode='w+').close()
 
     def computation(self):
         good_results = list()
+
+        logging.info('Start selection of random nodes and distance calculation')
+
+        tick = timeit.default_timer()
         for i in range(self.number_of_checks):
             s = self.graph.random_node()
             d = self.graph.random_node()
             good_results.append((s, d, self.graph.shortest_path_length(s, d)))
+        tock = timeit.default_timer()
 
+        logging.info('Finished selection of random nodes and distance calculation in '+str(tock-tick)+'s')
+
+        logging.info('Start approximations')
+
+        tick = timeit.default_timer()
         for (s, d, real_distance) in good_results:
             approx_distance = self.computation_func(s, d, self.graph, self.precomputation_dir, **self.computation_kwargs)
-            print(s, ' -> ', d, ' = ', approx_distance, '(real distance = ', real_distance, ')')
+            #print(s, ' -> ', d, ' = ', approx_distance, '(real distance = ', real_distance, ')')
+        tock = timeit.default_timer()
+        logging.info('Finished approximations in '+str(tock-tick)+'s')
 
     def run(self):
         self._load_graph()
