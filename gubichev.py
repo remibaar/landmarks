@@ -155,6 +155,7 @@ def sketch(s, d, g, directory):
 def sketch_ce(s, d, g, directory):
     q = sketch(s, d, g, directory)
 
+    to_be_added = list()
     for path in q.queue:
 
         found = False
@@ -164,7 +165,7 @@ def sketch_ce(s, d, g, directory):
 
                 if path[i] == path[j]:
                     path = Path(path[0:i] + path[j+1:])
-                    q.put(path)
+                    to_be_added.append(path)
 
                     found = True
                     break
@@ -172,11 +173,16 @@ def sketch_ce(s, d, g, directory):
             if found:
                 break
 
+    for x in to_be_added:
+        q.put(x)
+
     return q
 
 
 def sketch_cesc(s, d, g, directory):
     q = sketch_ce(s, d, g, directory)
+
+    to_be_added = list()
 
     for path in q.queue:
 
@@ -188,8 +194,8 @@ def sketch_cesc(s, d, g, directory):
                 for j in range(len(path) - 1, i + 1):
 
                     if successor == path[j]:
-                        path = Path(path[0:i] + [successor] +  path[j + 1:])
-                        q.put(path)
+                        path = Path(path[0:i] + [successor] + path[j + 1:])
+                        to_be_added.append(path)
 
                         found = True
                         break
@@ -199,5 +205,8 @@ def sketch_cesc(s, d, g, directory):
 
             if found:
                 break
+
+    for x in to_be_added:
+        q.put(x)
 
     return q
