@@ -68,7 +68,7 @@ def precomputation(g, directory, k):
     logging.info('r = '+str(r))
 
     for i in range(k):
-        for j in range(r):
+        for j in range(r + 1):
             landmarks = g.random_nodes(2**j)
             logging.info('i = ' + str(i) + ', j = ' + str(j) + ', landmarks = ' + str(landmarks))
 
