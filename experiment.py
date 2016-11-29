@@ -16,7 +16,9 @@ class Experiment:
             precomputation=None,
             precomputation_dir=None,
             precomputation_kwargs=dict(),
-            force_precomputation=False
+            force_precomputation=False,
+            landmark_sel=None,
+            landmark_sel_kwargs=dict()
     ):
         self.id = id
         self.edgelist = edgelist
@@ -28,6 +30,8 @@ class Experiment:
         self.force_precomputation = force_precomputation
         self.computation_kwargs = computation_kwargs
         self.number_of_checks = number_of_checks
+        self.landmark_sel = landmark_sel
+        self.landmark_sel_kwargs = landmark_sel_kwargs
 
     def _load_graph(self):
         self.graph = self.graph_processor()
