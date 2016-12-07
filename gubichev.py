@@ -3,6 +3,7 @@ import enum
 import logging
 import queue
 import os
+import networkx as nx
 
 
 def _file_name(name, directory):
@@ -28,7 +29,7 @@ class Path(list):
 
 def _write_sketches(filename, sketches):
     """
-    Write an list of sketches to the given file
+    Write a list of sketches to the given file
     A sketch is a tuple of (direction, path)
 
     :param filename:
@@ -69,7 +70,7 @@ def precomputation(g, directory, k):
     :return:
     """
 
-    logging.info('Start gubichev precomputation')
+    logging.info('Start Gubichev precomputation')
 
     sketches = dict()
 
@@ -115,6 +116,11 @@ def convert_queue_to_length(s, d, g, directory, function):
     else:
         return len(q.get()) - 1
 
+def deg_centrality_landmarks(g,d):
+    dc = nx.degree_centrality()
+    i = dc.items()
+    sorted = i.sort(reverse=True, key=lambda x: x[1])
+    return map(lambda x: x[0], sorted[:d])
 
 def sketch(s, d, g, directory):
     # Read sketches
