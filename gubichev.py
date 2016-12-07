@@ -210,3 +210,67 @@ def sketch_cesc(s, d, g, directory):
         q.put(x)
 
     return q
+
+
+def tree_sketch(s, d, g, directory):
+    # Read sketches
+    s_sketches = _read_sketches(_file_name(s, directory))
+    d_sketches = _read_sketches(_file_name(d, directory))
+
+    q = queue.PriorityQueue()
+
+    if s_sketches is None or d_sketches is None:
+        return q
+
+    # Filter direction
+    s_sketches = [sketch[1] for sketch in s_sketches if sketch[0] == Direction.forward]
+    d_sketches = [list(reversed(sketch[1])) for sketch in d_sketches if sketch[0] == Direction.backward]
+
+    index = 0
+
+    l_shortest = float('inf')
+    v_bfs = dict()
+    v_rbfs = dict()
+
+    while True:
+        # Breath first search through trees
+        bfs = dict()
+        for i, sketch in enumerate(s_sketches):
+            if len(sketch) > index and sketch not in bfs.values():
+                bfs[i] = sketch[index]
+
+        rbfs = dict()
+        for i, sketch in enumerate(d_sketches):
+            if len(sketch) > index and sketch not in rbfs.values():
+                rbfs[i] = sketch[index]
+
+        # Check if expansion was possible
+        if len(bfs) == 0 and len(rbfs) == 0:
+            break
+
+        for s_sketches_index, u in bfs.items():
+            for d_sketches_index, v in rbfs.items():
+
+                p_v_to_d = list(reversed(d_sketches[d_sketches_index][0:index+1]))
+                p_s_to_u = s_sketches[s_sketches_index][0:index+1]
+
+                v_bfs[u] = p_s_to_u
+                for x, p_s_to_x in v_bfs.items():
+                    if v in g.successors(x):
+                        p = Path(p_s_to_x + p_v_to_d)
+                        q.put(p)
+                        l_shortest = min(l_shortest, len(p))
+
+                v_rbfs[v] = p_v_to_d
+                for x, p_x_to_d in v_rbfs.items():
+                    if x in g.successors(u):
+                        p = Path(p_s_to_u + p_x_to_d)
+                        q.put(p)
+                        l_shortest = min(l_shortest, len(p))
+
+        if min(index, len(bfs)) + min(index, len(rbfs)) >= l_shortest:
+            break
+
+        index += 1
+
+    return q
