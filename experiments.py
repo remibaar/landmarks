@@ -5,7 +5,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 experiments = {
-    'slashdot_k1': experiment.Experiment(id='slashdot_k1', edgelist='data/slashdot.txt', number_of_iterations=1,
+    'slashdot_k1': experiment.Experiment(id='slashdot_k1', edgelist='data/slashdot.txt', number_of_iterations=20,
                                             number_of_checks=1000,
                                             precomputation_func=gubichev.precomputation,
                                             precomputation_kwargs={'k': 1},
@@ -20,7 +20,7 @@ experiments = {
                                                 gubichev.convert_queue_to_length, {'function': gubichev.tree_sketch}),
                                             }),
 
-    'slashdot_k2': experiment.Experiment(id='slashdot_k2', edgelist='data/slashdot.txt', number_of_iterations=1,
+    'slashdot_k2': experiment.Experiment(id='slashdot_k2', edgelist='data/slashdot.txt', number_of_iterations=20,
                                          number_of_checks=1000,
                                          precomputation_func=gubichev.precomputation,
                                          precomputation_kwargs={'k': 2},
@@ -35,7 +35,7 @@ experiments = {
                                                  gubichev.convert_queue_to_length, {'function': gubichev.tree_sketch}),
                                          }),
 
-    'slashdot_k3': experiment.Experiment(id='slashdot_k3', edgelist='data/slashdot.txt', number_of_iterations=1,
+    'slashdot_k3': experiment.Experiment(id='slashdot_k3', edgelist='data/slashdot.txt', number_of_iterations=20,
                                          number_of_checks=1000,
                                          precomputation_func=gubichev.precomputation,
                                          precomputation_kwargs={'k': 3},
