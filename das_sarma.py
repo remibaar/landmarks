@@ -2,7 +2,7 @@ import math
 import enum
 import logging
 import os
-
+import timeit
 
 def _file_name(name, directory):
     return directory+'/'+str(name)+'.txt'
@@ -100,8 +100,13 @@ def precomputation(g, directory, k):
 
 def sketch(s, d, g, directory):
     # Read sketches
+    tic = timeit.default_timer()
     s_sketches = _read_sketches(_file_name(s, directory))
     d_sketches = _read_sketches(_file_name(d, directory))
+    toc = timeit.default_timer()
+
+    print('Took ', (toc - tic), ' seconds')
+
 
     if s_sketches is None or d_sketches is None:
         return float('inf')

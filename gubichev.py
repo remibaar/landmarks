@@ -219,11 +219,17 @@ def sketch_cesc(s, d, g, directory):
 
 
 def tree_sketch(s, d, g, directory):
+
+    q = queue.PriorityQueue()
+
+    # the same nodes
+    if s == d:
+        q.put(Path([s]))
+        return q
+
     # Read sketches
     s_sketches = _read_sketches(_file_name(s, directory))
     d_sketches = _read_sketches(_file_name(d, directory))
-
-    q = queue.PriorityQueue()
 
     if s_sketches is None or d_sketches is None:
         return q
@@ -231,6 +237,10 @@ def tree_sketch(s, d, g, directory):
     # Filter direction
     s_sketches = [sketch[1] for sketch in s_sketches if sketch[0] == Direction.forward]
     d_sketches = [list(reversed(sketch[1])) for sketch in d_sketches if sketch[0] == Direction.backward]
+
+    # Are there common landmarks, to check if in the same component
+    if len(set([sketch[-1] for sketch in s_sketches]) & set([sketch[-1] for sketch in d_sketches])) == 0:
+        return q
 
     index = 0
 
@@ -255,26 +265,30 @@ def tree_sketch(s, d, g, directory):
             break
 
         for s_sketches_index, u in bfs.items():
-            for d_sketches_index, v in rbfs.items():
+            p_s_to_u = s_sketches[s_sketches_index][0:index + 1]
+            v_bfs[u] = p_s_to_u
 
-                p_v_to_d = list(reversed(d_sketches[d_sketches_index][0:index+1]))
-                p_s_to_u = s_sketches[s_sketches_index][0:index+1]
+        for d_sketches_index, v in rbfs.items():
+            p_v_to_d = list(reversed(d_sketches[d_sketches_index][0:index+1]))
+            v_rbfs[v] = p_v_to_d
 
-                v_bfs[u] = p_s_to_u
-                for x, p_s_to_x in v_bfs.items():
-                    if v in g.successors(x):
-                        p = Path(p_s_to_x + p_v_to_d)
-                        q.put(p)
-                        l_shortest = min(l_shortest, len(p))
+        for d_sketches_index, v in rbfs.items():
+            for x, p_s_to_x in v_bfs.items():
+                if v in g.successors(x):
+                    p_v_to_d = v_rbfs[v]
+                    p = Path(p_s_to_x + p_v_to_d)
+                    q.put(p)
+                    l_shortest = min(l_shortest, len(p))
 
-                v_rbfs[v] = p_v_to_d
-                for x, p_x_to_d in v_rbfs.items():
-                    if x in g.successors(u):
-                        p = Path(p_s_to_u + p_x_to_d)
-                        q.put(p)
-                        l_shortest = min(l_shortest, len(p))
+        for s_sketches_index, u in bfs.items():
+            for x, p_x_to_d in v_rbfs.items():
+                if x in g.successors(u):
+                    p_s_to_u = v_bfs[u]
+                    p = Path(p_s_to_u + p_x_to_d)
+                    q.put(p)
+                    l_shortest = min(l_shortest, len(p))
 
-        if min(index, len(bfs)) + min(index, len(rbfs)) >= l_shortest:
+        if index * 2 >= l_shortest:
             break
 
         index += 1

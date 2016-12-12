@@ -33,6 +33,10 @@ class Experiment:
 
 
     def precomputation(self, dir, id):
+
+        if self.precomputation_func is None:
+            return
+
         # make dir if not exists
         if not os.path.exists(dir):
             os.makedirs(dir)
@@ -53,17 +57,24 @@ class Experiment:
 
     def determine_test_set(self):
 
-        results = pd.DataFrame(columns=['s', 'd', 'dijkstra_distance', 'dijkstra_time'])
+        results = pd.DataFrame(columns=['s', 'd', 'dijkstra_distance', 'dijkstra_time', 'bidirectional_distance', 'bidirectional_time'])
 
         for i in range(self.number_of_checks):
             s = self.graph.random_node()
             d = self.graph.random_node()
-            tic = timeit.default_timer()
-            real_distance = self.graph.shortest_path_length(s, d)
-            toc = timeit.default_timer
 
-            time = toc - tic
-            results.loc[i] = [s, d, real_distance, time]
+            tic = timeit.default_timer()
+            #dijkstra_distance = self.graph.dijkstra_path_length(s, d)
+            dijkstra_distance = None
+            toc = timeit.default_timer()
+            dijkstra_time = toc - tic
+
+            tic = timeit.default_timer()
+            bidirectional_distance = self.graph.bidirectional_shortest_path_length(s, d)
+            toc = timeit.default_timer()
+            bidirectional_time = toc - tic
+
+            results.loc[i] = [s, d, dijkstra_distance, dijkstra_time, bidirectional_distance, bidirectional_time]
 
         return results
 

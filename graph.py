@@ -35,17 +35,34 @@ class Graph(metaclass=ABCMeta):
     def predecessors(self, node):
         raise NotImplementedError()
 
+    @staticmethod
+    def _path_length(path):
+        if path is None:
+            return float('inf')
+        else:
+            return len(path) - 1
+
     @abstractmethod
     def shortest_path(self, source_node, destination_node):
         raise NotImplementedError()
 
     def shortest_path_length(self, source_node, destination_node):
-        shortest_path = self.shortest_path(source_node, destination_node)
+        return self._path_length(self.shortest_path(source_node, destination_node))
 
-        if shortest_path is None:
-            return float('inf')
-        else:
-            return len(shortest_path) - 1
+    @abstractmethod
+    def dijkstra_path(self, source_node, destination_node):
+        raise NotImplementedError()
+
+    def dijkstra_path_length(self, source_node, destination_node):
+        return self._path_length(self.dijkstra_path(source_node, destination_node))
+
+    @abstractmethod
+    def bidirectional_shortest_path(self, source_node, destination_node):
+        raise NotImplementedError()
+
+    def bidirectional_shortest_path_length(self, source_node, destination_node):
+        return self._path_length(self.bidirectional_shortest_path(source_node, destination_node))
+
 
     def _shortest_path_nodes_landmark_length(self, landmarks, expansion_function):
         shortest_paths = {l: (l, 0) for l in landmarks}
@@ -128,5 +145,17 @@ class NetworkxGraph(Graph):
     def shortest_path(self, source_node, destination_node):
         try:
             return networkx.shortest_path(self.g, source_node, destination_node)
+        except networkx.exception.NetworkXNoPath:
+            return None
+
+    def dijkstra_path(self, source_node, destination_node):
+        try:
+            return networkx.dijkstra_path(self.g, source_node, destination_node)
+        except networkx.exception.NetworkXNoPath:
+            return None
+
+    def bidirectional_shortest_path(self, source_node, destination_node):
+        try:
+            return networkx.bidirectional_shortest_path(self.g, source_node, destination_node)
         except networkx.exception.NetworkXNoPath:
             return None
