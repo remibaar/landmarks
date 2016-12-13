@@ -1,4 +1,5 @@
 import enum
+import os
 
 
 class Path(list):
@@ -9,7 +10,7 @@ class Path(list):
         return len(self) > len(other)
 
 
-def _file_name(name, directory):
+def file_name(name, directory):
     return directory+'/'+str(name)+'.txt'
 
 
@@ -22,7 +23,7 @@ class Direction(enum.IntEnum):
         return str(self.value)
 
 
-def _write_sketch_distances(filename, sketches):
+def write_sketch_distances(filename, sketches):
     """
     Write an list of sketches to the given file
     A sketch is a tuple of (direction, landmark, distance)
@@ -55,7 +56,7 @@ def _read_sketch_distances(filename):
     return sketches
 
 
-def _write_sketch_paths(filename, sketches):
+def write_sketch_paths(filename, sketches):
     """
     Write an list of sketches to the given file
     A sketch is a tuple of (direction, path)
@@ -69,7 +70,7 @@ def _write_sketch_paths(filename, sketches):
     file.close()
 
 
-def _read_sketch_paths(filename):
+def read_sketch_paths(filename):
     """
     Reads an list of sketches from the given file
     A sketch is a tuple of (direction, path)
@@ -113,7 +114,7 @@ def calculate_sketch_landmarks_distances(g, landmarks):
 def calculate_sketch_landmarks_paths(g, landmarks):
     sketches = dict()
     # Forward search
-    shortest_paths = g.shortest_path_nodes_to_landmark_length(landmarks)
+    shortest_paths = g.shortest_path_nodes_to_landmark_path(landmarks)
     for node, (landmark, distance) in shortest_paths.items():
         if node not in sketches:
             sketches[node] = list()
@@ -121,7 +122,7 @@ def calculate_sketch_landmarks_paths(g, landmarks):
         sketches[node].append((Direction.forward, landmark, distance))
 
     # Backward search
-    shortest_paths = g.shortest_path_nodes_from_landmark_length(landmarks)
+    shortest_paths = g.shortest_path_nodes_to_landmark_path(landmarks)
     for node, (landmark, distance) in shortest_paths.items():
         if node not in sketches:
             sketches[node] = list()

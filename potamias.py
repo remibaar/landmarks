@@ -1,9 +1,55 @@
 import networkx as nx
 import csv
 import metis
+import logging
 from random import choice
 from operator import itemgetter
+from common import Direction, Path, file_name, read_sketch_paths, write_sketch_paths
 
+
+
+def precomputation(g, directory, landmark_function, landmark_kwargs):
+    """
+    Implements the Sketch Algorithm as Defined by Gubichev et al.
+
+    :param g: A graph, classes are defined in graph.py
+    :param k: Number of iterations
+    :return:
+    """
+
+    logging.info('Start Potatmias precomputation')
+
+    sketches = dict()
+
+    landmarks = landmark_function(g, **landmark_kwargs)
+
+    for l in landmarks:
+
+        landmark = [l]
+
+        # Forward search
+        shortest_paths = g.shortest_path_nodes_to_landmark_path(landmark)
+        for node, path in shortest_paths.items():
+            if node not in sketches:
+                sketches[node] = list()
+
+            sketches[node].append((Direction.forward, path))
+
+        # Backward search
+        shortest_paths = g.shortest_path_nodes_from_landmark_path(landmark)
+        for node, path in shortest_paths.items():
+            if node not in sketches:
+                sketches[node] = list()
+
+            sketches[node].append((Direction.backward, path))
+
+
+    # Write sketches to file
+    logging.info('Starting to write '+str(len(sketches))+' files')
+    for node, data in sketches.items():
+        write_sketch_paths(file_name(node, directory), data)
+
+    logging.info('Finished Potatmias precomputation')
 
 def select_nodes(g, k, d, h=None, constrained=False, strategy='closeness'):
     """

@@ -4,61 +4,7 @@ import logging
 import queue
 import os
 import networkx as nx
-
-
-def _file_name(name, directory):
-    return directory+'/'+str(name)+'.txt'
-
-
-# Direction enum
-class Direction(enum.IntEnum):
-    forward = 0
-    backward = 1
-
-    def __str__(self):
-        return str(self.value)
-
-
-class Path(list):
-    def __lt__(self, other):
-        return len(self) < len(other)
-
-    def __gt__(self, other):
-        return len(self) > len(other)
-
-
-def _write_sketches(filename, sketches):
-    """
-    Write a list of sketches to the given file
-    A sketch is a tuple of (direction, path)
-
-    :param filename:
-    :param sketches:
-    :return:
-    """
-    file = open(filename, mode='w+')
-    file.writelines([str(sketch[0])+'\t'+(','.join(map(str, sketch[1])))+'\n' for sketch in sketches])
-    file.close()
-
-
-def _read_sketches(filename):
-    """
-    Reads an list of sketches from the given file
-    A sketch is a tuple of (direction, path)
-
-    :param filename:
-    :return: list of sketches
-    """
-    if not os.path.exists(filename):
-        return None
-
-    sketches = list()
-    file = open(filename, mode='r')
-    for line in file:
-        line = line.replace('\n', '')
-        parts = line.split('\t')
-        sketches.append((Direction(int(parts[0])), Path(parts[1].split(','))))
-    return sketches
+from common import Direction, Path, file_name, read_sketch_paths, write_sketch_paths
 
 
 def precomputation(g, directory, k):
@@ -103,8 +49,7 @@ def precomputation(g, directory, k):
     # Write sketches to file
     logging.info('Starting to write '+str(len(sketches))+' files')
     for node, data in sketches.items():
-        _write_sketches(_file_name(node, directory), data)
-
+        write_sketch_paths(file_name(node, directory), data)
 
     logging.info('Finished gubichev precomputation')
 
@@ -116,16 +61,11 @@ def convert_queue_to_length(s, d, g, directory, function):
     else:
         return len(q.get()) - 1
 
-def deg_centrality_landmarks(g,d):
-    dc = nx.degree_centrality()
-    i = dc.items()
-    sorted = i.sort(reverse=True, key=lambda x: x[1])
-    return map(lambda x: x[0], sorted[:d])
 
 def sketch(s, d, g, directory):
     # Read sketches
-    s_sketches = _read_sketches(_file_name(s, directory))
-    d_sketches = _read_sketches(_file_name(d, directory))
+    s_sketches = read_sketch_paths(file_name(s, directory))
+    d_sketches = read_sketch_paths(file_name(d, directory))
 
     q = queue.PriorityQueue()
 
@@ -228,8 +168,8 @@ def tree_sketch(s, d, g, directory):
         return q
 
     # Read sketches
-    s_sketches = _read_sketches(_file_name(s, directory))
-    d_sketches = _read_sketches(_file_name(d, directory))
+    s_sketches = read_sketch_paths(file_name(s, directory))
+    d_sketches = read_sketch_paths(file_name(d, directory))
 
     if s_sketches is None or d_sketches is None:
         return q
