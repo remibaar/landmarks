@@ -52,7 +52,7 @@ def precomputation(g, directory, landmark_function, landmark_kwargs):
     logging.info('Finished Potatmias precomputation')
 
 
-def random(g, k):
+def random(g, d):
     """
     Selects top d landmarks based on closeness centrality or degree centrality,
     with landmarks constrained by distance h between them or not
@@ -60,7 +60,7 @@ def random(g, k):
     :param k: number of nodes to exact calculate closeness centrality for
     :return: list of landmark nodes
     """
-    return g.random_nodes(k)
+    return g.random_nodes(d)
 
 
 def select_nodes(g, k, d, h=None, constrained=False, strategy='closeness'):
