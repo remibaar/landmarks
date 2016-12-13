@@ -23,7 +23,6 @@ class Experiment:
 
         self.edgelist = config.data_dir + edgelist
         self.graph_processor = graph_processor
-        self._load_graph()
 
 
 
@@ -119,6 +118,10 @@ class Experiment:
         # make dir if not exists
         if not os.path.exists(results_dir):
             os.makedirs(results_dir)
+
+        # Load graph
+        self._load_graph()
+
 
         for i in range(self.number_of_iterations):
             sketch_dir = config.sketch_dir+'/'+str(self.id)+'/'+str(i)+'/'
