@@ -21,7 +21,7 @@ class Experiment:
 
         self.computations = computations
 
-        self.edgelist = edgelist
+        self.edgelist = config.data_dir + edgelist
         self.graph_processor = graph_processor
         self._load_graph()
 

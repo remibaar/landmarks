@@ -1,3 +1,4 @@
 
 sketch_dir = '/tmp/sketches/'
 result_dir = '/Users/remi/results/'
+data_dir = '/Users/remi/data/'
