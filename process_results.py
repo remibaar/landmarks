@@ -9,7 +9,7 @@ ids = [
 precomputation_results = pd.DataFrame(columns=['id', 'iterations', 'time_mean', 'time_std', 'size_mean', 'size_std'])
 
 for index, id in enumerate(ids):
-    precomputation_file = config.data_dir + id + '.xlsx'
+    precomputation_file = config.result_dir + id + '/precomputation.xlsx'
 
     try:
         df = pd.read_excel(precomputation_file)
