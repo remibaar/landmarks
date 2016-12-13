@@ -17,6 +17,6 @@ for index, id in enumerate(ids):
         logging.warning('Unable to load precomputation file: '+precomputation_file+' (' + str(e) + ')')
         continue
 
-    precomputation_results.loc[index] = [id, df.count(), df['time'].mean(), df['time'].std(), df['dir_size'].mean(), df['dir_size'].std()]
+    precomputation_results.loc[index] = [id, df['id'].count(), df['time'].mean(), df['time'].std(), df['dir_size'].mean(), df['dir_size'].std()]
 
 precomputation_results.to_excel(config.final_result_dir+'precomputation.xlsx')
