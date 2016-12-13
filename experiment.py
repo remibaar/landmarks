@@ -99,10 +99,22 @@ class Experiment:
         return pd.concat([results, new_results], axis=1)
 
 
+    def create_flag(self, dir):
+        open(dir+'/.completed', mode='w+').close()
+
+    def check_flag(self, dir):
+        if os.path.isdir(dir):
+            if os.path.exists(dir + '/.precompation_completed'):
+                return True
+        return False
+
 
     def run(self):
 
         results_dir = config.result_dir + '/' + str(self.id) + '/'
+
+        if self.check_flag(results_dir):
+            logging.info('Already computated', self.id, ' so skipping it!')
 
         # make dir if not exists
         if not os.path.exists(results_dir):
@@ -121,6 +133,8 @@ class Experiment:
             results.to_excel(results_dir+str(i)+'.xlsx')
 
         self.precomputation_results.to_excel(results_dir+'precomputation.xlsx')
+
+        self.create_flag(results_dir)
 
 """
 class Experiment:
