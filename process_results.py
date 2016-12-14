@@ -209,7 +209,11 @@ for index, id in enumerate([id for id in ids if not id.startswith('gubichev')]):
     if data_name not in results_error:
         results_error[data_name] = dict()
 
+    if data_name not in results_time:
+        results_time[data_name] = dict()
+
     results_error[data_name].update(result_error)
+    results_time[data_name].update(result_time)
     # Create DF from dictionary
     #df_result_error = pd.DataFrame(result_error, index=[data_name])
     #df_result_time = pd.DataFrame(result_time, index=[data_name])
