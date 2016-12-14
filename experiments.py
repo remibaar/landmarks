@@ -9,8 +9,8 @@ logging.basicConfig(level=logging.INFO)
 
 data_sets = [
     "slashdot",
-    # "google",
-    # "gplus",
+    #"google",
+    "gplus",
     "facebook",
     # "roadnet_ca"
 ]
