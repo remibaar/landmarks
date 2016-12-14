@@ -195,16 +195,16 @@ for index, id in enumerate([id for id in ids if not id.startswith('gubichev')]):
         result_error[(precomputation_name, a)] = error.mean()
         #result_error[(precomputation_name, a, 'std')] = error.std()
 
-        result_time[(precomputation_name, a, 'mean')] = time.mean()
-        result_time[(precomputation_name, a, 'std')] = time.std()
-        result_time[(precomputation_name, a, 'median')] = time.median()
+        #result_time[(precomputation_name, a, 'mean')] = time.mean()
+        #result_time[(precomputation_name, a, 'std')] = time.std()
+        result_time[(precomputation_name, a)] = time.median()
 
     # Add bidirectional time to results
     a = 'bidirectional'
     time = total_df[a+'_time']
-    result_time[(precomputation_name, a, 'mean')] = time.mean()
-    result_time[(precomputation_name, a, 'std')] = time.std()
-    result_time[(precomputation_name, a, 'median')] = time.median()
+    #result_time[(precomputation_name, a, 'mean')] = time.mean()
+    #result_time[(precomputation_name, a, 'std')] = time.std()
+    result_time[(precomputation_name, a)] = time.median()
 
     if data_name not in results_error:
         results_error[data_name] = dict()
