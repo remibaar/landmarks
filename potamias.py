@@ -212,9 +212,10 @@ def get_partitions(g, P, dataset):
         return load_partitions(name)
     else:
         _, parts = metis.part_graph(g, P)
-        partitions = list(zip(parts, g.nodes()))
+        partitions = zip(parts, g.nodes())
         save_partitions(partitions, name)
-        return partitions
+
+        return {str(node): int(part) for (part, node) in list(partitions)}
 
 
 def partitionp(g, P, type, dataset_name, k=None):
