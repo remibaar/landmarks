@@ -4,6 +4,7 @@ import logging
 import queue
 import os
 import networkx as nx
+import timeit
 from common import Direction, Path, file_name, read_sketch_paths, write_sketch_paths
 
 
@@ -64,8 +65,12 @@ def convert_queue_to_length(s, d, g, directory, function):
 
 def sketch(s, d, g, directory):
     # Read sketches
+    tic = timeit.default_timer()
     s_sketches = read_sketch_paths(file_name(s, directory))
     d_sketches = read_sketch_paths(file_name(d, directory))
+    toc = timeit.default_timer()
+
+    read_time = toc-tic
 
     q = queue.PriorityQueue()
 

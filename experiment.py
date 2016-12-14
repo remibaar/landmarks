@@ -7,8 +7,8 @@ import pandas as pd
 
 
 class Experiment:
-
-    def __init__(self, id, edgelist, computations, precomputation_func, precomputation_kwargs = {}, number_of_checks = 1, number_of_iterations = 1, graph_processor = graph.NetworkxGraph):
+    def __init__(self, id, edgelist, computations, precomputation_func, precomputation_kwargs={}, number_of_checks=1,
+                 number_of_iterations=1, graph_processor=graph.NetworkxGraph, dijkstra=False):
         self.precomputation_results = pd.DataFrame(columns=['id', 'time', 'dir_size'])
         self.results = pd.DataFrame(columns=['s', 'd', 'dijkstra_distance', 'dijkstra_time'])
 
@@ -24,12 +24,11 @@ class Experiment:
         self.edgelist = config.data_dir + edgelist
         self.graph_processor = graph_processor
 
-
+        self.dijkstra = dijkstra
 
     def _load_graph(self):
         self.graph = self.graph_processor()
         self.graph.read_edgelist(self.edgelist)
-
 
     def precomputation(self, dir, id):
 
@@ -44,44 +43,50 @@ class Experiment:
         self.precomputation_func(self.graph, dir, **self.precomputation_kwargs)
         tock = timeit.default_timer()
 
-
         # Calculate results and add to data set
-        time = tock-tick
-        dir_size = sum([os.path.getsize(dir+'/'+f) for f in os.listdir(dir) if os.path.isfile(dir+'/'+f)])
+        time = tock - tick
+        dir_size = sum([os.path.getsize(dir + '/' + f) for f in os.listdir(dir) if os.path.isfile(dir + '/' + f)])
 
         result = pd.DataFrame([{'id': id, 'time': time, 'dir_size': dir_size}])
 
         self.precomputation_results = self.precomputation_results.append(result, ignore_index=True)
 
-
     def determine_test_set(self):
 
-        results = pd.DataFrame(columns=['s', 'd', 'dijkstra_distance', 'dijkstra_time', 'bidirectional_distance', 'bidirectional_time'])
+        columns = ['s', 'd', 'bidirectional_distance', 'bidirectional_time']
+
+        if self.dijkstra:
+            columns.append('dijkstra_distance')
+            columns.append('dijkstra_time')
+
+        results = pd.DataFrame(
+            columns=columns)
 
         for i in range(self.number_of_checks):
             s = self.graph.random_node()
             d = self.graph.random_node()
 
             tic = timeit.default_timer()
-            #dijkstra_distance = self.graph.dijkstra_path_length(s, d)
-            dijkstra_distance = None
-            toc = timeit.default_timer()
-            dijkstra_time = toc - tic
-
-            tic = timeit.default_timer()
             bidirectional_distance = self.graph.bidirectional_shortest_path_length(s, d)
             toc = timeit.default_timer()
             bidirectional_time = toc - tic
 
-            results.loc[i] = [s, d, dijkstra_distance, dijkstra_time, bidirectional_distance, bidirectional_time]
+            if self.dijkstra:
+                tic = timeit.default_timer()
+                dijkstra_distance = self.graph.dijkstra_path_length(s, d)
+                toc = timeit.default_timer()
+                dijkstra_time = toc - tic
+
+            if self.dijkstra:
+                results.loc[i] = [s, d, bidirectional_distance, bidirectional_time, dijkstra_distance, dijkstra_time]
+            else:
+                results.loc[i] = [s, d, bidirectional_distance, bidirectional_time]
 
         return results
 
-
     def computation(self, id, results, precomputation_dir, function, function_kwargs):
 
-
-        new_results = pd.DataFrame(columns=[id+'_time', id+'_approximation'])
+        new_results = pd.DataFrame(columns=[id + '_time', id + '_approximation'])
         for i, row in results.iterrows():
             s = row['s']
             d = row['d']
@@ -97,16 +102,14 @@ class Experiment:
 
         return pd.concat([results, new_results], axis=1)
 
-
     def create_flag(self, dir):
-        open(dir+'/.completed', mode='w+').close()
+        open(dir + '/.completed', mode='w+').close()
 
     def check_flag(self, dir):
         if os.path.isdir(dir):
             if os.path.exists(dir + '/.precompation_completed'):
                 return True
         return False
-
 
     def run(self):
 
@@ -122,22 +125,20 @@ class Experiment:
         # Load graph
         self._load_graph()
 
-
         for i in range(self.number_of_iterations):
-            sketch_dir = config.sketch_dir+'/'+str(self.id)+'/'+str(i)+'/'
+            sketch_dir = config.sketch_dir + '/' + str(self.id) + '/' + str(i) + '/'
             self.precomputation(sketch_dir, i)
-
 
             results = self.determine_test_set()
             for id, (func, kwargs) in self.computations.items():
                 results = self.computation(id, results, sketch_dir, func, kwargs)
 
+            results.to_excel(results_dir + str(i) + '.xlsx')
 
-            results.to_excel(results_dir+str(i)+'.xlsx')
-
-        self.precomputation_results.to_excel(results_dir+'precomputation.xlsx')
+        self.precomputation_results.to_excel(results_dir + 'precomputation.xlsx')
 
         self.create_flag(results_dir)
+
 
 """
 class Experiment:
