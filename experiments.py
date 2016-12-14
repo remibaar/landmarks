@@ -76,7 +76,7 @@ for data in data_sets:
                                             number_of_checks=1000,
                                             precomputation_func=potamias.precomputation,
                                             precomputation_kwargs={'landmark_function': potamias.partitionp,
-                                                                   'landmark_kwargs': {'p': 1,
+                                                                   'landmark_kwargs': {'P': 1,
                                                                                        'name': '/tmp/partitions/' + id + '.csv'}},
                                             computations={
                                                 'sketch': (

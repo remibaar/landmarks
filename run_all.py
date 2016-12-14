@@ -6,8 +6,8 @@ import config
 print("Running all the experiments")
 
 # Define a function for the thread
-def execute_experiment(args):
-    experiment = args[0]
+def execute_experiment(arg):
+    experiment = arg
     print('Start to run ', experiment.id)
     experiment.run()
     print('Finished', experiment.id)
