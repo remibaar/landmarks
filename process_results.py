@@ -82,6 +82,8 @@ for index, id in enumerate([id for id in ids if id.startswith('gubichev')]):
                 return float(x[a_approx] != 0)
             elif float(x['bidirectional_distance']) == float('inf'):
                 return float(float(x[a_approx]) != float('inf'))
+            elif float(x[a_approx]) == float('inf'):
+                return 1
             else:
                 return (x[a_approx] - x['bidirectional_distance']) / x['bidirectional_distance']
 
@@ -169,6 +171,8 @@ for index, id in enumerate([id for id in ids if not id.startswith('gubichev')]):
                 return float(x[a_approx] != 0)
             elif float(x['bidirectional_distance']) == float('inf'):
                 return float(float(x[a_approx]) != float('inf'))
+            elif float(x[a_approx]) == float('inf'):
+                return 1
             else:
                 return (x[a_approx] - x['bidirectional_distance']) / x['bidirectional_distance']
 
