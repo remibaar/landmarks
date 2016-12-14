@@ -9,10 +9,15 @@ ids = experiments.experiments.keys()
 
 
 # Precomputation results
-precomputation_results = pd.DataFrame(columns=['id', 'iterations', 'time_mean', 'time_std', 'size_mean', 'size_std'])
-
+#precomputation_results = pd.DataFrame(columns=['id', 'iterations', 'time_mean', 'size_mean'])
+results = dict()
 for index, id in enumerate(ids):
     precomputation_file = config.result_dir + id + '/precomputation.xlsx'
+
+    # Get info from id
+    id_parts = id.split('_')
+    data_name = id_parts[-1]
+    precomputation_name = ' '.join(id_parts[:-1])
 
     try:
         df = pd.read_excel(precomputation_file)
@@ -20,10 +25,17 @@ for index, id in enumerate(ids):
         logging.warning('Unable to load precomputation file: '+precomputation_file+' (' + str(e) + ')')
         continue
 
-    precomputation_results.loc[index] = [id, df['id'].count(), df['time'].mean(), df['time'].std(), df['dir_size'].mean(), df['dir_size'].std()]
+    if data_name not in results:
+        results[data_name] = dict()
+    results[data_name].update({
+        (precomputation_name, 'time'): df['time'].mean(),
+        (precomputation_name, 'size'): df['dir_size'].mean()
+    })
 
-precomputation_results.to_excel(config.final_result_dir+'precomputation.xlsx')
+    #precomputation_results.loc[index] = [id, df['id'].count(), df['time'].mean(), df['time'].std(), df['dir_size'].mean(), df['dir_size'].std()]
 
+#precomputation_results.to_excel(config.final_result_dir+'precomputation.xlsx')
+pd.DataFrame(results).to_excel(config.final_result_dir+'precomputation.xlsx')
 
 
 #############
