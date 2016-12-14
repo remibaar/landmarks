@@ -213,9 +213,10 @@ def get_partitions(g, P, dataset):
     else:
         _, parts = metis.part_graph(g, P)
         partitions = zip(parts, g.nodes())
+        part_list = list(partitions)
         save_partitions(partitions, name)
 
-        return {str(node): int(part) for (part, node) in list(partitions)}
+        return {str(node): int(part) for (part, node) in part_list}
 
 
 def partitionp(g, P, type, dataset_name, k=None):
@@ -228,7 +229,6 @@ def partitionp(g, P, type, dataset_name, k=None):
     """
     g = g.g
     partitions = get_partitions(g, P, dataset_name)
-
     if type == 'cc':
         if k is None:
             raise Exception('k is not set, but closeness_centrality is used')
@@ -239,6 +239,8 @@ def partitionp(g, P, type, dataset_name, k=None):
     #ckeys = list(centralities.keys())
     #cvalues = list(centralities.values())
     #partc = list(zip(parts, cvalues, ckeys))
+
+    print(partitions)
 
     partc = [(part, centralities[node], node) for node, part in partitions.items()]
 
