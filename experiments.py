@@ -13,6 +13,7 @@ data_sets = [
     #"google",
     #"gplus",
     "facebook",
+    "twitter"
     #"roadnet_ca"
 ]
 
