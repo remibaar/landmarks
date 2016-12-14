@@ -29,7 +29,6 @@ for index, id in enumerate(ids):
         results[data_name] = dict()
     results[data_name].update({
         (precomputation_name, 'time_mean'): df['time'].mean(),
-        (precomputation_name, 'time_median'): df['time'].median(),
         (precomputation_name, 'size'): df['dir_size'].mean()
     })
 
@@ -109,6 +108,7 @@ for index, id in enumerate([id for id in ids if id.startswith('gubichev')]):
 
         result_time[(a, 'mean')] = time.mean()
         result_time[(a, 'std')] = time.std()
+        result_time[(a, 'median')] = time.median()
 
     # Add bidirectional time to results
     a = 'bidirectional'
@@ -197,6 +197,7 @@ for index, id in enumerate([id for id in ids if not id.startswith('gubichev')]):
 
         result_time[(precomputation_name, a, 'mean')] = time.mean()
         result_time[(precomputation_name, a, 'std')] = time.std()
+        result_time[(precomputation_name, a, 'median')] = time.median()
 
     # Add bidirectional time to results
     a = 'bidirectional'
