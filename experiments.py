@@ -8,10 +8,10 @@ logging.basicConfig(level=logging.INFO)
 
 data_sets = [
     "slashdot",
-    #"google",
-    #"gplus",
+    # "google",
+    # "gplus",
     "facebook",
-    #"roadnet_ca"
+    # "roadnet_ca"
 ]
 
 experiments = dict()
@@ -42,8 +42,9 @@ for data in data_sets:
     experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
                                             number_of_iterations=20,
                                             number_of_checks=1000,
-                                              precomputation_func=potamias.precomputation,
-                                              precomputation_kwargs={'landmark_function': potamias.random, 'landmark_kwargs': {'d': 20}},
+                                            precomputation_func=potamias.precomputation,
+                                            precomputation_kwargs={'landmark_function': potamias.random,
+                                                                   'landmark_kwargs': {'d': 20}},
                                             computations={
                                                 'sketch': (
                                                     gubichev.convert_queue_to_length,
@@ -57,8 +58,9 @@ for data in data_sets:
     experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
                                             number_of_iterations=20,
                                             number_of_checks=1000,
-                                              precomputation_func=potamias.precomputation,
-                                              precomputation_kwargs={'landmark_function': potamias.random, 'landmark_kwargs': {'d': 20}},
+                                            precomputation_func=potamias.precomputation,
+                                            precomputation_kwargs={'landmark_function': potamias.random,
+                                                                   'landmark_kwargs': {'d': 20}},
                                             computations={
                                                 'sketch': (
                                                     gubichev.convert_queue_to_length,
@@ -72,8 +74,10 @@ for data in data_sets:
     experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
                                             number_of_iterations=20,
                                             number_of_checks=1000,
-                                              precomputation_func=potamias.precomputation,
-                                              precomputation_kwargs={'landmark_function': potamias.partitionp, 'landmark_kwargs': {'p': 1, 'name': '/tmp/partitions/'+id+'.csv'}},
+                                            precomputation_func=potamias.precomputation,
+                                            precomputation_kwargs={'landmark_function': potamias.partitionp,
+                                                                   'landmark_kwargs': {'p': 1,
+                                                                                       'name': '/tmp/partitions/' + id + '.csv'}},
                                             computations={
                                                 'sketch': (
                                                     gubichev.convert_queue_to_length,
@@ -87,9 +91,10 @@ for data in data_sets:
     experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
                                             number_of_iterations=20,
                                             number_of_checks=1000,
-                                              precomputation_func=potamias.precomputation,
-                                              precomputation_kwargs={'landmark_function': potamias.select_nodes,
-                                                                     'landmark_kwargs': {'k':50, 'd':20, 'strategy':'closeness'}},
+                                            precomputation_func=potamias.precomputation,
+                                            precomputation_kwargs={'landmark_function': potamias.select_nodes,
+                                                                   'landmark_kwargs': {'k': 50, 'd': 20,
+                                                                                       'strategy': 'closeness'}},
                                             computations={
                                                 'sketch': (
                                                     gubichev.convert_queue_to_length,
@@ -98,4 +103,3 @@ for data in data_sets:
                                                     gubichev.convert_queue_to_length,
                                                     {'function': gubichev.sketch_ce})
                                             })
-
