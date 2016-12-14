@@ -165,7 +165,7 @@ def get_degree_centrality(g, dataset):
     if os.path.isfile(name):
         return load_centralities(name)
     else:
-        node_centrality = nx.degree_centrality(g)
+        node_centrality = nx.degree_centrality(g.g)
         save_centralities(node_centrality, name)
         return node_centrality
 
