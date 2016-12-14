@@ -255,11 +255,11 @@ def borderp(g, P, dataset_name):
     :param g: graph g
     :return: list of landmarks
     """
-    g = g.g
     landmarks = []
     partitions = get_partitions(g, P, dataset_name)
     P = len(set(partitions.values()))
     bu = {}
+    g = g.g
     for node in g.nodes():
         neighbors = g.neighbors(node)
         p = partitions[node]
