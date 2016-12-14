@@ -192,8 +192,8 @@ for index, id in enumerate([id for id in ids if not id.startswith('gubichev')]):
         error = total_df.apply(approx_error, axis=1)
         time = total_df[a_time]
 
-        result_error[(precomputation_name, a, 'mean')] = error.mean()
-        result_error[(precomputation_name, a, 'std')] = error.std()
+        result_error[(precomputation_name, a)] = error.mean()
+        #result_error[(precomputation_name, a, 'std')] = error.std()
 
         result_time[(precomputation_name, a, 'mean')] = time.mean()
         result_time[(precomputation_name, a, 'std')] = time.std()
@@ -217,5 +217,6 @@ for index, id in enumerate([id for id in ids if not id.startswith('gubichev')]):
     #results_error = pd.concat([results_error, df_result_error], axis=0, join='outer')
     #results_time = pd.concat([results_time, df_result_time])
 
-pd.DataFrame(results_error).to_excel(config.final_result_dir+'potamias_error.xlsx')
+pd.DataFrame(results_error).tranpose().to_excel(config.final_result_dir+'potamias_error.xlsx')
+pd.DataFrame(results_error).to_excel(config.final_result_dir+'potamias_time.xlsx')
 #results_time.to_excel(config.final_result_dir+'potamias_time.xlsx')
