@@ -204,6 +204,7 @@ for index, id in enumerate([id for id in ids if not id.startswith('gubichev')]):
     time = total_df[a+'_time']
     result_time[(precomputation_name, a, 'mean')] = time.mean()
     result_time[(precomputation_name, a, 'std')] = time.std()
+    result_time[(precomputation_name, a, 'median')] = time.median()
 
     if data_name not in results_error:
         results_error[data_name] = dict()
@@ -218,5 +219,5 @@ for index, id in enumerate([id for id in ids if not id.startswith('gubichev')]):
     #results_time = pd.concat([results_time, df_result_time])
 
 pd.DataFrame(results_error).transpose().to_excel(config.final_result_dir+'potamias_error.xlsx')
-pd.DataFrame(results_error).to_excel(config.final_result_dir+'potamias_time.xlsx')
+pd.DataFrame(results_time).transpose().to_excel(config.final_result_dir+'potamias_time.xlsx')
 #results_time.to_excel(config.final_result_dir+'potamias_time.xlsx')
