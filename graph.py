@@ -163,3 +163,8 @@ class NetworkxGraph(Graph):
             return networkx.bidirectional_shortest_path(self.g, source_node, destination_node)
         except networkx.exception.NetworkXNoPath:
             return None
+
+
+class NetworkxGraphUndirected(NetworkxGraph):
+    def __init__(self):
+        self.g = networkx.Graph()

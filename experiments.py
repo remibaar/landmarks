@@ -3,6 +3,7 @@ import das_sarma
 import gubichev
 import logging
 import potamias
+import graph
 
 logging.basicConfig(level=logging.INFO)
 
@@ -14,14 +15,22 @@ data_sets = [
     # "roadnet_ca"
 ]
 
+undirected = ["facebook"]
+
 iterations = 10
 checks = 500
 
 experiments = dict()
 
 for data in data_sets:
+    
+    if data in undirected:
+        graph_processor = graph.NetworkxGraphUndirected
+    else:
+        graph_processor = graph.NetworkxGraph
+    
     id = 'gubichev_' + data
-    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+    experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
                                             number_of_iterations=iterations,
                                             number_of_checks=checks,
                                             precomputation_func=gubichev.precomputation,
@@ -42,7 +51,7 @@ for data in data_sets:
                                             })
 
     id = 'random_20_' + data
-    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+    experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
                                             number_of_iterations=iterations,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
@@ -60,7 +69,7 @@ for data in data_sets:
                                             })
 
     id = 'degree_20_' + data
-    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+    experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
                                             number_of_iterations=iterations,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
@@ -78,7 +87,7 @@ for data in data_sets:
                                             })
 
     id = 'centrality_20_' + data
-    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+    experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
                                             number_of_iterations=iterations,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
@@ -96,7 +105,7 @@ for data in data_sets:
                                             })
 
     id = 'degree_constrained_20_' + data
-    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+    experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
                                             number_of_iterations=iterations,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
@@ -115,7 +124,7 @@ for data in data_sets:
                                             })
 
     id = 'centrality_constrained_20_' + data
-    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+    experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
                                             number_of_iterations=iterations,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
@@ -134,7 +143,7 @@ for data in data_sets:
                                             })
 
     id = 'degree_partition_20_' + data
-    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+    experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
                                             number_of_iterations=iterations,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
@@ -152,7 +161,7 @@ for data in data_sets:
                                             )
 
     id = 'centrality_partition_20_' + data
-    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+    experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
                                             number_of_iterations=iterations,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
@@ -170,7 +179,7 @@ for data in data_sets:
                                             )
 
     id = 'border_partition_20_' + data
-    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+    experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
                                             number_of_iterations=iterations,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
