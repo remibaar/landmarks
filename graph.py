@@ -168,3 +168,12 @@ class NetworkxGraph(Graph):
 class NetworkxGraphUndirected(NetworkxGraph):
     def __init__(self):
         self.g = networkx.Graph()
+
+    def read_edgelist(self, filename):
+        self.g = networkx.read_edgelist(filename, create_using=networkx.Graph())
+
+    def successors(self, node):
+        return self.g.neighbors(node)
+
+    def predecessors(self, node):
+        return self.g.neighbors(node)
