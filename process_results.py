@@ -28,7 +28,8 @@ for index, id in enumerate(ids):
     if data_name not in results:
         results[data_name] = dict()
     results[data_name].update({
-        (precomputation_name, 'time'): df['time'].mean(),
+        (precomputation_name, 'time_mean'): df['time'].mean(),
+        (precomputation_name, 'time_median'): df['time'].median(),
         (precomputation_name, 'size'): df['dir_size'].mean()
     })
 
