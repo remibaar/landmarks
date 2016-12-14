@@ -112,10 +112,10 @@ def sketch_ce(s, d, g, directory):
         found = False
         for i in range(len(path) - 1):
 
-            for j in range(len(path) - 1, i):
+            for j in range(i + 1, len(path)):
 
                 if path[i] == path[j]:
-                    path = Path(path[0:i] + path[j+1:])
+                    path = Path(path[0:i+1] + path[j+1:])
                     to_be_added.append(path)
 
                     found = True
@@ -142,10 +142,10 @@ def sketch_cesc(s, d, g, directory):
 
             for successor in g.successors(path[i]):
 
-                for j in range(len(path) - 1, i + 1):
+                for j in range(len(path) - 1, i + 1, -1):
 
                     if successor == path[j]:
-                        path = Path(path[0:i] + [successor] + path[j + 1:])
+                        path = Path(path[0:i+1] + [successor] + path[j + 1:])
                         to_be_added.append(path)
 
                         found = True

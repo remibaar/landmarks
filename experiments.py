@@ -8,17 +8,18 @@ import graph
 logging.basicConfig(level=logging.INFO)
 
 data_sets = [
+    #"test",
     "slashdot",
     #"google",
-    "gplus",
+    #"gplus",
     "facebook",
-    # "roadnet_ca"
+    #"roadnet_ca"
 ]
 
 undirected = ["facebook"]
 
 iterations = 10
-checks = 1000
+checks = 500
 
 experiments = dict()
 
@@ -34,7 +35,7 @@ for data in data_sets:
                                             number_of_iterations=iterations,
                                             number_of_checks=checks,
                                             precomputation_func=gubichev.precomputation,
-                                            precomputation_kwargs={'k': 2},
+                                            precomputation_kwargs={'k': 1},
                                             computations={
                                                 'sketch': (
                                                     gubichev.convert_queue_to_length,
