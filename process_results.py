@@ -79,11 +79,12 @@ for index, id in enumerate([id for id in ids if id.startswith('gubichev')]):
 
         def approx_error(x):
             if x['bidirectional_distance'] == 0:
-                return float(x[a_approx] == 0)
-            elif x['bidirectional_distance'] == float('inf'):
-                return float(x[a_approx] == float('inf'))
+                return float(x[a_approx] != 0)
+            elif float(x['bidirectional_distance']) == float('inf'):
+                return float(float(x[a_approx]) != float('inf'))
             else:
                 return (x[a_approx] - x['bidirectional_distance']) / x['bidirectional_distance']
+
 
         error = total_df.apply(approx_error, axis=1)
         time = total_df[a_time]
@@ -165,9 +166,9 @@ for index, id in enumerate([id for id in ids if not id.startswith('gubichev')]):
 
         def approx_error(x):
             if x['bidirectional_distance'] == 0:
-                return float(x[a_approx] == 0)
-            elif x['bidirectional_distance'] == float('inf'):
-                return float(x[a_approx] == float('inf'))
+                return float(x[a_approx] != 0)
+            elif float(x['bidirectional_distance']) == float('inf'):
+                return float(float(x[a_approx]) != float('inf'))
             else:
                 return (x[a_approx] - x['bidirectional_distance']) / x['bidirectional_distance']
 
