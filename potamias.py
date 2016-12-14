@@ -211,6 +211,7 @@ def get_partitions(g, P, dataset):
     if os.path.isfile(name):
         return load_partitions(name)
     else:
+        g = g.g
         _, parts = metis.part_graph(g, P)
         partitions = zip(parts, g.nodes())
         part_list = list(partitions)
@@ -227,7 +228,6 @@ def partitionp(g, P, type, dataset_name, k=None):
     :param name: partition file to save partitions in
     :return: list of landmarks
     """
-    g = g.g
     partitions = get_partitions(g, P, dataset_name)
     if type == 'cc':
         if k is None:
