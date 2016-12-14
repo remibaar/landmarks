@@ -18,7 +18,7 @@ data_sets = [
 undirected = ["facebook"]
 
 iterations = 10
-checks = 500
+checks = 1000
 
 experiments = dict()
 
@@ -70,7 +70,7 @@ for data in data_sets:
 
     id = 'degree_20_' + data
     experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
-                                            number_of_iterations=iterations,
+                                            number_of_iterations=1,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
                                             precomputation_kwargs={'landmark_function': potamias.select_nodes,
@@ -88,7 +88,7 @@ for data in data_sets:
 
     id = 'centrality_20_' + data
     experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
-                                            number_of_iterations=iterations,
+                                            number_of_iterations=1,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
                                             precomputation_kwargs={'landmark_function': potamias.select_nodes,
@@ -106,7 +106,7 @@ for data in data_sets:
 
     id = 'degree_constrained_20_' + data
     experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
-                                            number_of_iterations=iterations,
+                                            number_of_iterations=1,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
                                             precomputation_kwargs={'landmark_function': potamias.select_nodes,
@@ -125,7 +125,7 @@ for data in data_sets:
 
     id = 'centrality_constrained_20_' + data
     experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
-                                            number_of_iterations=iterations,
+                                            number_of_iterations=1,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
                                             precomputation_kwargs={'landmark_function': potamias.select_nodes,
@@ -144,7 +144,7 @@ for data in data_sets:
 
     id = 'degree_partition_20_' + data
     experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
-                                            number_of_iterations=iterations,
+                                            number_of_iterations=1,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
                                             precomputation_kwargs={'landmark_function': potamias.partitionp,
@@ -162,7 +162,7 @@ for data in data_sets:
 
     id = 'centrality_partition_20_' + data
     experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
-                                            number_of_iterations=iterations,
+                                            number_of_iterations=1,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
                                             precomputation_kwargs={'landmark_function': potamias.partitionp,
@@ -180,7 +180,7 @@ for data in data_sets:
 
     id = 'border_partition_20_' + data
     experiments[id] = experiment.Experiment(id=id, graph_processor=graph_processor, edgelist=data + '.txt',
-                                            number_of_iterations=iterations,
+                                            number_of_iterations=1,
                                             number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
                                             precomputation_kwargs={'landmark_function': potamias.borderp,
