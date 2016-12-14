@@ -11,7 +11,7 @@ data_sets = [
     #"test",
     "slashdot",
     #"google",
-    #"gplus",
+    "gplus",
     "facebook",
     "twitter"
     #"roadnet_ca"
