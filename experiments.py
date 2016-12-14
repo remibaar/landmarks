@@ -14,13 +14,16 @@ data_sets = [
     # "roadnet_ca"
 ]
 
+iterations = 10
+checks = 500
+
 experiments = dict()
 
 for data in data_sets:
     id = 'gubichev_' + data
     experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
-                                            number_of_iterations=20,
-                                            number_of_checks=1000,
+                                            number_of_iterations=iterations,
+                                            number_of_checks=checks,
                                             precomputation_func=gubichev.precomputation,
                                             precomputation_kwargs={'k': 2},
                                             computations={
@@ -38,63 +41,15 @@ for data in data_sets:
                                                     {'function': gubichev.tree_sketch}),
                                             })
 
-    id = 'random_' + data
+    id = 'random_20_' + data
     experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
-                                            number_of_iterations=20,
-                                            number_of_checks=1000,
-                                            precomputation_func=potamias.precomputation,
-                                            precomputation_kwargs={'landmark_function': potamias.random,
-                                                                   'landmark_kwargs': {'d': 20}},
-                                            computations={
-                                                'sketch': (
-                                                    gubichev.convert_queue_to_length,
-                                                    {'function': gubichev.sketch}),
-                                                'sketch_ce': (
-                                                    gubichev.convert_queue_to_length,
-                                                    {'function': gubichev.sketch_ce})
-                                            })
-
-    id = 'degree_' + data
-    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
-                                            number_of_iterations=20,
-                                            number_of_checks=1000,
-                                            precomputation_func=potamias.precomputation,
-                                            precomputation_kwargs={'landmark_function': potamias.random,
-                                                                   'landmark_kwargs': {'d': 20}},
-                                            computations={
-                                                'sketch': (
-                                                    gubichev.convert_queue_to_length,
-                                                    {'function': gubichev.sketch}),
-                                                'sketch_ce': (
-                                                    gubichev.convert_queue_to_length,
-                                                    {'function': gubichev.sketch_ce})
-                                            })
-
-    id = 'partition1_' + data
-    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
-                                            number_of_iterations=20,
-                                            number_of_checks=1000,
-                                            precomputation_func=potamias.precomputation,
-                                            precomputation_kwargs={'landmark_function': potamias.partitionp,
-                                                                   'landmark_kwargs': {'P': 1,
-                                                                                       'name': '/tmp/partitions/' + id + '.csv'}},
-                                            computations={
-                                                'sketch': (
-                                                    gubichev.convert_queue_to_length,
-                                                    {'function': gubichev.sketch}),
-                                                'sketch_ce': (
-                                                    gubichev.convert_queue_to_length,
-                                                    {'function': gubichev.sketch_ce})
-                                            })
-
-    id = 'centrality_' + data
-    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
-                                            number_of_iterations=20,
-                                            number_of_checks=1000,
+                                            number_of_iterations=iterations,
+                                            number_of_checks=checks,
                                             precomputation_func=potamias.precomputation,
                                             precomputation_kwargs={'landmark_function': potamias.select_nodes,
                                                                    'landmark_kwargs': {'k': 50, 'd': 20,
-                                                                                       'strategy': 'closeness'}},
+                                                                                       'strategy': 'random',
+                                                                                       'dataset_name': data}},
                                             computations={
                                                 'sketch': (
                                                     gubichev.convert_queue_to_length,
@@ -103,3 +58,130 @@ for data in data_sets:
                                                     gubichev.convert_queue_to_length,
                                                     {'function': gubichev.sketch_ce})
                                             })
+
+    id = 'degree_20_' + data
+    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+                                            number_of_iterations=iterations,
+                                            number_of_checks=checks,
+                                            precomputation_func=potamias.precomputation,
+                                            precomputation_kwargs={'landmark_function': potamias.select_nodes,
+                                                                   'landmark_kwargs': {'k': 50, 'd': 20,
+                                                                                       'strategy': 'closeness',
+                                                                                       'dataset_name': data}},
+                                            computations={
+                                                'sketch': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch}),
+                                                'sketch_ce': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch_ce})
+                                            })
+
+    id = 'centrality_20_' + data
+    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+                                            number_of_iterations=iterations,
+                                            number_of_checks=checks,
+                                            precomputation_func=potamias.precomputation,
+                                            precomputation_kwargs={'landmark_function': potamias.select_nodes,
+                                                                   'landmark_kwargs': {'k': 50, 'd': 20,
+                                                                                       'strategy': 'random',
+                                                                                       'dataset_name': data}},
+                                            computations={
+                                                'sketch': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch}),
+                                                'sketch_ce': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch_ce})
+                                            })
+
+    id = 'degree_constrained_20_' + data
+    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+                                            number_of_iterations=iterations,
+                                            number_of_checks=checks,
+                                            precomputation_func=potamias.precomputation,
+                                            precomputation_kwargs={'landmark_function': potamias.select_nodes,
+                                                                   'landmark_kwargs': {'k': 50, 'd': 20, 'h': 1,
+                                                                                       'constrained': True,
+                                                                                       'strategy': 'closeness',
+                                                                                       'dataset_name': data}},
+                                            computations={
+                                                'sketch': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch}),
+                                                'sketch_ce': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch_ce})
+                                            })
+
+    id = 'centrality_constrained_20_' + data
+    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+                                            number_of_iterations=iterations,
+                                            number_of_checks=checks,
+                                            precomputation_func=potamias.precomputation,
+                                            precomputation_kwargs={'landmark_function': potamias.select_nodes,
+                                                                   'landmark_kwargs': {'k': 50, 'd': 20, 'h': 1,
+                                                                                       'constrained': True,
+                                                                                       'strategy': 'random',
+                                                                                       'dataset_name': data}},
+                                            computations={
+                                                'sketch': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch}),
+                                                'sketch_ce': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch_ce})
+                                            })
+
+    id = 'degree_partition_20_' + data
+    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+                                            number_of_iterations=iterations,
+                                            number_of_checks=checks,
+                                            precomputation_func=potamias.precomputation,
+                                            precomputation_kwargs={'landmark_function': potamias.partitionp,
+                                                                   'landmark_kwargs': {'type': 'dc', 'P': 20,
+                                                                                       'dataset_name': data}},
+                                            computations={
+                                                'sketch': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch}),
+                                                'sketch_ce': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch_ce})
+                                            }
+                                            )
+
+    id = 'centrality_partition_20_' + data
+    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+                                            number_of_iterations=iterations,
+                                            number_of_checks=checks,
+                                            precomputation_func=potamias.precomputation,
+                                            precomputation_kwargs={'landmark_function': potamias.partitionp,
+                                                                   'landmark_kwargs': {'type': 'cc', 'P': 20, 'k': 50,
+                                                                                       'dataset_name': data}},
+                                            computations={
+                                                'sketch': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch}),
+                                                'sketch_ce': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch_ce})
+                                            }
+                                            )
+
+    id = 'border_partition_20_' + data
+    experiments[id] = experiment.Experiment(id=id, edgelist=data + '.txt',
+                                            number_of_iterations=iterations,
+                                            number_of_checks=checks,
+                                            precomputation_func=potamias.precomputation,
+                                            precomputation_kwargs={'landmark_function': potamias.borderp,
+                                                                   'landmark_kwargs': {'P': 20, 'dataset_name': data}},
+                                            computations={
+                                                'sketch': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch}),
+                                                'sketch_ce': (
+                                                    gubichev.convert_queue_to_length,
+                                                    {'function': gubichev.sketch_ce})
+                                            }
+                                            )

@@ -127,6 +127,10 @@ class NetworkxGraph(Graph):
     def read_edgelist(self, filename):
         self.g = networkx.read_edgelist(filename, create_using=networkx.DiGraph())
 
+
+    def nodes(self):
+        return
+
     def n(self):
         return self.g.number_of_nodes()
 

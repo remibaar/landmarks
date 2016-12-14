@@ -2,6 +2,8 @@ import networkx as nx
 import csv
 import metis
 import logging
+import os
+import config
 from random import choice
 from operator import itemgetter
 from common import Direction, Path, file_name, read_sketch_paths, write_sketch_paths
@@ -52,18 +54,7 @@ def precomputation(g, directory, landmark_function, landmark_kwargs):
     logging.info('Finished Potatmias precomputation')
 
 
-def random(g, d):
-    """
-    Selects top d landmarks based on closeness centrality or degree centrality,
-    with landmarks constrained by distance h between them or not
-    :param g: graph g
-    :param k: number of nodes to exact calculate closeness centrality for
-    :return: list of landmark nodes
-    """
-    return g.random_nodes(d)
-
-
-def select_nodes(g, k, d, h=None, constrained=False, strategy='closeness'):
+def select_nodes(g, k, d, dataset_name, h=None, constrained=False, strategy='closeness'):
     """
     Selects top d landmarks based on closeness centrality or degree centrality,
     with landmarks constrained by distance h between them or not
@@ -78,17 +69,16 @@ def select_nodes(g, k, d, h=None, constrained=False, strategy='closeness'):
     if strategy == 'random':
         return g.random_nodes(d)
     elif strategy == 'degree':
-        node_centrality = nx.degree_centrality(g)
-        save_centralities(node_centrality, 'dc')
+        node_centrality = get_degree_centrality(g, dataset_name)
         sorted_c = sorted(node_centrality, reverse=True, key=node_centrality.get)
         landmarks = sorted_c[:d]
     elif strategy == 'closeness':
-        node_centrality = approx_closeness(g, k)
+        node_centrality = get_closeness_centrality(g, k, dataset_name)
         sorted_c = sorted(node_centrality, key=node_centrality.get)
         landmarks = sorted_c[:d]
     # Return the top d
     if constrained:
-        landmarks = constrain(node_centrality, d, h)
+        landmarks = constrain(g, node_centrality, d, h)
     return landmarks
 
 
@@ -99,6 +89,7 @@ def approx_closeness(g, k):
     :param k: number of nodes to calculate exact closeness centrality for
     :return: dictionary of approximated closeness for all nodes of graph g
     """
+    g = g.g
     v = []
     sp = {}
     # Calculate shortest paths from random node v_i to all other nodes and store in dictionary with key = v_i
@@ -110,13 +101,13 @@ def approx_closeness(g, k):
     for j in g.nodes():
         sum = 0
         for c in range(k):
-            sum += n*sp[v[c]][j]/(k*(n-1))
+            if j in sp[v[c]]:
+                sum += n*sp[v[c]][j]/(k*(n-1))
         closeness[j] = sum
-    save_centralities(closeness, 'cc')
     return closeness
 
 
-def constrain(node_centrality, sorted_c, d, h):
+def constrain(g, node_centrality, d, h):
     """
     Select top nodes, discarding nodes that are too close to each other
     :param node_centrality: centralities for all nodes
@@ -125,14 +116,15 @@ def constrain(node_centrality, sorted_c, d, h):
     :param h: discard nodes closer than h to each other
     :return: list of landmark nodes
     """
+    g = g.g
     count = d
     not_a_landmark = []
     con = {}
     sorted_c = sorted(node_centrality, key=node_centrality.get)
     for i in sorted_c:
         if i not in not_a_landmark:
-            con[i] = node_centrality[sorted_c[i]]
-            not_a_landmark = list(nx.single_source_shortest_path_length(g, source=i, cutoff=h))
+            con[i] = node_centrality[i]
+            not_a_landmark = list(nx.single_source_shortest_path_length(g, source=i, cutoff=h).keys())
             count -= 1
         if count == 0:
             return list(con.keys())
@@ -145,7 +137,7 @@ def save_centralities(c, name):
     :param name: name of centrality file
     :return: None
     """
-    with open('%s.csv' % name, 'w') as csv_file:
+    with open(name, 'w') as csv_file:
         writer = csv.writer(csv_file, delimiter=' ')
         writer.writerow(["node", "centr"])
         for key, value in c.items():
@@ -160,40 +152,72 @@ def load_centralities(name):
     :return: dictionary of centralities
     """
     centralities = {}
-    with open('%s.csv' % name, 'r') as csv_file:
+    with open(name, 'r') as csv_file:
         reader = csv.DictReader(csv_file, delimiter=' ')
         for row in reader:
-            centralities[int(row['node'])] = float(row['centr'])
+            centralities[str(row['node'])] = float(row['centr'])
     return centralities
 
 
-def save_partitions(p):
+def get_degree_centrality(g, dataset):
+    name = config.tmp_dir+dataset+'dc.csv'
+
+    if os.path.isfile(name):
+        return load_centralities(name)
+    else:
+        node_centrality = nx.degree_centrality(g)
+        save_centralities(node_centrality, name)
+        return node_centrality
+
+
+def get_closeness_centrality(g, k, dataset):
+    name = config.tmp_dir+dataset+'cc_'+str(k) +'.csv'
+    if os.path.isfile(name):
+        return load_centralities(name)
+    else:
+        closeness = approx_closeness(g, k)
+        save_centralities(closeness, name)
+        return closeness
+
+
+def save_partitions(p, filename):
     """
     Save partitions
     :param p: partition file
     :return: None
     """
-    with open('partitions.csv', 'w') as csv_file:
+    with open(filename, 'w') as csv_file:
         writer = csv.writer(csv_file, delimiter=' ')
         writer.writerow(["partition", "node"])
         for row in p:
             writer.writerow(row)
     return
 
-def load_partitions():
+def load_partitions(filename):
     """
     Load partitions
     :return: dictionary of nodes and their corresponding partition
     """
     partitions = {}
-    with open('partitions.csv', 'r') as csv_file:
+    with open(filename, 'r') as csv_file:
         reader = csv.DictReader(csv_file, delimiter=' ')
         for row in reader:
-            partitions[int(row['node'])] = int(row['partition'])
+            partitions[str(row['node'])] = int(row['partition'])
     return partitions
 
 
-def partitionp(g, P, name):
+def get_partitions(g, P, dataset):
+    name = config.tmp_dir+dataset+'part_'+str(P) +'.csv'
+    if os.path.isfile(name):
+        return load_partitions(name)
+    else:
+        _, parts = metis.part_graph(g, P)
+        partitions = zip(parts, g.nodes())
+        save_partitions(partitions, name)
+        return partitions
+
+
+def partitionp(g, P, type, dataset_name, k=None):
     """
     Pick the nodes with the highest centrality in each partition
     :param g: graph g
@@ -201,31 +225,42 @@ def partitionp(g, P, name):
     :param name: partition file to save partitions in
     :return: list of landmarks
     """
-    _, parts = metis.part_graph(g, P)
-    centralities = load_centralities(name)
-    ckeys = list(centralities.keys())
-    cvalues = list(centralities.values())
-    partc = list(zip(parts, cvalues, ckeys))
-    part = list(zip(parts, ckeys))
-    save_partitions(part)
+    g = g.g
+    partitions = get_partitions(g, P, dataset_name)
+
+    if type == 'cc':
+        if k is None:
+            raise Exception('k is not set, but closeness_centrality is used')
+        centralities = get_closeness_centrality(g, k, dataset_name)
+    elif type == 'dc':
+        centralities = get_degree_centrality(g, dataset_name)
+
+    #ckeys = list(centralities.keys())
+    #cvalues = list(centralities.values())
+    #partc = list(zip(parts, cvalues, ckeys))
+
+    partc = [(part, centralities[node], node) for node, part in partitions.items()]
+
+
     landmarks = []
-    if name == 'cc':
+    if type == 'cc':
         for i in range(P):
             landmarks.append((min(filter(lambda a: a[0] == i, partc), key=itemgetter(1))[2]))
-    elif name == 'dc':
+    elif type == 'dc':
         for i in range(P):
             landmarks.append((max(filter(lambda a: a[0] == i, partc), key=itemgetter(1))[2]))
     return landmarks
 
 
-def borderp(g):
+def borderp(g, P, dataset_name):
     """
     Pick nodes close to the border of each partition
     :param g: graph g
     :return: list of landmarks
     """
+    g = g.g
     landmarks = []
-    partitions = load_partitions()
+    partitions = get_partitions(g, P, dataset_name)
     P = len(set(partitions.values()))
     bu = {}
     for node in g.nodes():

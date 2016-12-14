@@ -107,7 +107,7 @@ class Experiment:
 
     def check_flag(self, dir):
         if os.path.isdir(dir):
-            if os.path.exists(dir + '/.precompation_completed'):
+            if os.path.exists(dir + '/.completed'):
                 return True
         return False
 
@@ -116,7 +116,8 @@ class Experiment:
         results_dir = config.result_dir + '/' + str(self.id) + '/'
 
         if self.check_flag(results_dir):
-            logging.info('Already computated', self.id, ' so skipping it!')
+            logging.info('Already computated ' + str(self.id) + ' so skipping it!')
+            return
 
         # make dir if not exists
         if not os.path.exists(results_dir):
