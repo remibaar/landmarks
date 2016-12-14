@@ -236,14 +236,7 @@ def partitionp(g, P, type, dataset_name, k=None):
     elif type == 'dc':
         centralities = get_degree_centrality(g, dataset_name)
 
-    #ckeys = list(centralities.keys())
-    #cvalues = list(centralities.values())
-    #partc = list(zip(parts, cvalues, ckeys))
-
-    print(partitions)
-
     partc = [(part, centralities[node], node) for node, part in partitions.items()]
-
 
     landmarks = []
     if type == 'cc':
